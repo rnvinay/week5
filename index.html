@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indian Cities Information</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    margin: 0;
+    padding: 20px;
+  }
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-gap: 20px;
+  }
+  .city-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+  }
+  .city-name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .city-info {
+    font-size: 16px;
+    color: #666;
+  }
+</style>
+</head>
+<body>
+<div class="container" id="citiesContainer">
+  <!-- Cities will be dynamically added here -->
+</div>
+
+<script>
+  // Fetch data from the provided API
+  fetch('https://api.npoint.io/7bbd3a59c401f616bb89')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log(data); // Log the data received from the API
+      const citiesContainer = document.getElementById('citiesContainer');
+      if (Array.isArray(data)) {
+        data.forEach(city => {
+          // Create a card for each city
+          const cityCard = document.createElement('div');
+          cityCard.classList.add('city-card');
+
+          // Populate city details
+          const cityName = document.createElement('div');
+          cityName.classList.add('city-name');
+          cityName.textContent = city.name;
+
+          const cityInfo = document.createElement('div');
+          cityInfo.classList.add('city-info');
+          cityInfo.innerHTML = `<b>State:</b> ${city.state}<br>
+                                <b>Population:</b> ${city.population}<br>
+                                <b>Area:</b> ${city.area}`;
+
+          // Append city details to the card
+          cityCard.appendChild(cityName);
+          cityCard.appendChild(cityInfo);
+
+          // Append the card to the container
+          citiesContainer.appendChild(cityCard);
+        });
+      } else {
+        throw new Error('Invalid data format: Expected an array of cities');
+      }
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+      // Display an error message to the user
+      const errorMessage = document.createElement('div');
+      errorMessage.textContent = 'Failed to fetch data. Please try again later.';
+      document.body.appendChild(errorMessage);
+    });
+</script>
+</body>
+</html>
